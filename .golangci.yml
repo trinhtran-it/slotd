@@ -1,0 +1,70 @@
+version: "2"
+
+run:
+  timeout: 5m
+  build-tags:
+    - integration # lint integration tests too
+
+linters:
+  default: none
+  enable:
+    - errcheck     # unchecked errors
+    - govet        # suspicious constructs
+    - staticcheck  # bugs, simplifications, style (includes gosimple/stylecheck in v2)
+    - revive       # idiomatic Go / golint successor
+    - gosec        # security issues
+    - errorlint    # %w wrapping, errors.Is/As instead of == and type assertions
+    - contextcheck # non-inherited contexts
+    - ineffassign  # ineffective assignments
+    - unused       # unused code
+  settings:
+    govet:
+      enable-all: true
+      disable:
+        - fieldalignment # noisy; readability over struct packing
+    revive:
+      rules:
+        - name: blank-imports
+        - name: context-as-argument
+        - name: context-keys-type
+        - name: dot-imports
+        - name: error-naming
+        - name: error-return
+        - name: error-strings
+        - name: errorf
+        - name: exported
+        - name: increment-decrement
+        - name: indent-error-flow
+        - name: package-comments
+        - name: range
+        - name: receiver-naming
+        - name: redefines-builtin-id
+        - name: superfluous-else
+        - name: time-naming
+        - name: unexported-return
+        - name: unreachable-code
+        - name: unused-parameter
+        - name: var-declaration
+        - name: var-naming
+  exclusions:
+    generated: strict
+    presets:
+      - std-error-handling
+    rules:
+      # Tests may use weak randomness, fixed paths, etc.
+      - path: _test\.go
+        linters:
+          - gosec
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/trinhtran-it/slotd
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
