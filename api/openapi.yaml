@@ -1,0 +1,6 @@
+openapi: 3.1.0
+info:
+  title: slotd API
+  version: 0.0.0
+  description: Booking engine API. Endpoints are defined in Phase 1.
+paths: {}
