@@ -1,10 +1,15 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
-# Local overrides (git-ignored). See .env.example.
--include .env
+# Local overrides (git-ignored). See .env.example. Every key in .env is
+# exported to commands such as `make api`.
+ifneq (,$(wildcard .env))
+include .env
+export $(shell sed -n 's/^\([A-Za-z_][A-Za-z0-9_]*\)=.*/\1/p' .env)
+endif
 
 DATABASE_URL ?= postgres://slotd:slotd@localhost:5432/slotd?sslmode=disable
+export DATABASE_URL
 
 # Pinned tool versions. Tools run via `go run pkg@version` so they stay out of go.mod.
 GOOSE_VERSION       := v3.30.2
@@ -34,8 +39,12 @@ reset: ## Stop local dependencies and delete their volumes
 migrate: ## Apply database migrations
 	$(GOOSE) -dir migrations postgres "$(DATABASE_URL)" up
 
+.PHONY: api
+api: ## Run the API locally (needs `make up migrate`)
+	go run ./cmd/api
+
 .PHONY: gen
-gen: ## Run code generators (sqlc, oapi-codegen) via go:generate
+gen: ## Regenerate sqlc queries and OpenAPI types (go:generate, pinned versions)
 	go generate ./...
 
 .PHONY: lint

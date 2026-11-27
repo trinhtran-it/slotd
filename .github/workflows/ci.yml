@@ -40,6 +40,16 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
       - run: go test -race -count=1 ./...
 
+  test-int:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - run: make test-int # testcontainers: Docker is preinstalled on ubuntu runners
+
   vuln:
     needs: test
     runs-on: ubuntu-latest
