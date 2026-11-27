@@ -1,0 +1,5 @@
+package: httpapi
+output: api.gen.go  # relative to the go:generate directory (internal/httpapi)
+generate:
+  models: true
+  std-http-server: true
